@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>상품 관리</title>
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+<h1>상품 관리</h1>
+
+<div id="search-message" class="search-message"></div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+    <button onclick="searchProducts()">검색</button>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>상품명</th>
+            <th>가격</th>
+            <th>이미지</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody id="product-table-body"></tbody>
+    </table>
+
+    <div class="button-area">
+        <a href="/admin/products/new">상품 등록</a>
+    </div>
+
+    <div class="pagination" id="pagination" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+    let currentPage = 0;
+    const pageSize = 5;
+
+    window.onload = () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "/admin/login.html";
+        return;
+      }
+      loadProducts(0, token);
+    };
+
+    function loadProducts(page, token) {
+      currentPage = page;
+      document.getElementById("searchInput").value = "";
+
+      fetch(`/api/products?page=${page}&size=${pageSize}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("search-message").innerText = "전체 상품 목록";
+        renderProducts(data.content, token);
+        renderPagination(data.totalPages, token);
+      })
+      .catch(err => alert("불러오기 실패: " + err.message));
+    }
+
+    function searchProducts() {
+      const token = localStorage.getItem("accessToken");
+      const keyword = document.getElementById("searchInput").value.trim();
+      if (!keyword) return;
+
+      fetch(`/api/products/search?name=${encodeURIComponent(keyword)}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const msgBox = document.getElementById("search-message");
+        msgBox.innerText = `'${keyword}' 검색 결과`;
+        const products = Array.isArray(data) ? data : data.content;
+        renderProducts(products, token);
+        document.getElementById("pagination").innerHTML = "";
+      })
+      .catch(err => alert("검색 실패: " + err.message));
+    }
+
+    function renderPagination(totalPages, token) {
+      const container = document.getElementById("pagination");
+      container.innerHTML = "";
+      for (let i = 0; i < totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = i + 1;
+        btn.classList.toggle("active", i === currentPage);
+        btn.onclick = () => loadProducts(i, token);
+        container.appendChild(btn);
+      }
+    }
+
+    function renderProducts(products, token) {
+      const tbody = document.getElementById("product-table-body");
+      const messageBox = document.getElementById("search-message");
+      tbody.innerHTML = "";
+
+      const isSearch = messageBox.innerText.includes("검색 결과");
+
+      if (products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">검색 결과 없음</td></tr>`;
+        if (isSearch) messageBox.innerText = "검색 결과가 없습니다.";
+        return;
+      }
+
+      products.forEach(product => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${product.name}</td>
+          <td>${product.price}</td>
+          <td><img src="${product.imageUrl}" width="100"></td>
+          <td>
+            <a href="/admin/products/edit/${product.id}">수정</a> |
+            <button onclick="viewOptions(${product.id}, '${token}')">옵션</button> |
+            <button onclick="deleteProduct(${product.id}, '${token}')">삭제</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function viewOptions(productId, token) {
+      fetch(`/api/products/${productId}/options`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+      .then(res => res.json())
+      .then(result => {
+        const options = result.content;
+        if (!options || options.length === 0) return alert("옵션 없음");
+        const list = options.map(o => `• ${o.name} (${o.quantity}개)`).join("\n");
+        alert(`옵션 목록:\n${list}`);
+      })
+      .catch(err => alert("옵션 불러오기 실패: " + err.message));
+    }
+
+    function deleteProduct(productId, token) {
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+
+      fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+      .then(async res => {
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(msg || "삭제 실패");
+        }
+        alert("삭제 완료");
+        loadProducts(currentPage, token);
+      })
+      .catch(err => alert("오류: " + err.message));
+    }
+</script>
+</body>
+</html>
+

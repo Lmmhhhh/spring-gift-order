@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정</title>
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+<h1>상품 수정</h1>
+
+<div class="form-container">
+    <form id="edit-form" data-id="">
+        <label for="name">상품명</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="price">가격</label>
+        <input type="number" id="price" name="price" required>
+
+        <label for="imageUrl">이미지 URL</label>
+        <input type="text" id="imageUrl" name="imageUrl" required>
+
+        <div class="btn-group">
+            <button type="submit">수정</button>
+            <a href="/admin/products/list">← 목록으로</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const productId = params.get("productId");
+    const form = document.getElementById("edit-form");
+
+    fetch(`/api/products/${productId}`, {
+      headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+    })
+      .then(res => res.json())
+      .then(product => {
+        document.getElementById("name").value = product.name;
+        document.getElementById("price").value = product.price;
+        document.getElementById("imageUrl").value = product.imageUrl;
+      });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const price = parseInt(document.getElementById("price").value);
+      const imageUrl = document.getElementById("imageUrl").value.trim();
+
+      if (!name || !price || !imageUrl) {
+        alert("모든 항목을 입력하세요.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/products/${productId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("accessToken")
+          },
+          body: JSON.stringify({ name, price, imageUrl })
+        });
+
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(msg || "수정 실패");
+        }
+
+        alert("수정 완료");
+        window.location.href = "/admin/products/list";
+      } catch (err) {
+        alert("오류: " + err.message);
+      }
+    });
+</script>
+</body>
+</html>
