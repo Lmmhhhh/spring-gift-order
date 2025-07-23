@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+<h1>상품 등록</h1>
+
+<div class="form-container">
+    <form id="product-form">
+        <label for="name">상품명</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="price">가격</label>
+        <input type="number" id="price" name="price" required>
+
+        <label for="imageUrl">이미지 URL</label>
+        <input type="text" id="imageUrl" name="imageUrl" required>
+
+        <hr>
+
+        <h2>옵션 등록</h2>
+        <div id="option-container">
+            <div class="option-row">
+                <input type="text" placeholder="옵션 이름" class="option-name" required>
+                <input type="number" placeholder="수량" class="option-quantity" required>
+                <button type="button" onclick="removeOption(this)">삭제</button>
+            </div>
+        </div>
+        <button type="button" onclick="addOption()">+ 옵션 추가</button>
+
+        <div class="btn-group">
+            <button type="submit">등록</button>
+            <a href="/admin/products/list">← 목록으로</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function addOption() {
+    const container = document.getElementById("option-container");
+    const row = document.createElement("div");
+    row.className = "option-row";
+    row.innerHTML = `
+      <input type="text" placeholder="옵션 이름" class="option-name" required>
+      <input type="number" placeholder="수량" class="option-quantity" required>
+      <button type="button" onclick="removeOption(this)">삭제</button>
+    `;
+    container.appendChild(row);
+  }
+
+  function removeOption(button) {
+    button.parentElement.remove();
+  }
+
+    document.getElementById("product-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const price = parseInt(document.getElementById("price").value);
+      const imageUrl = document.getElementById("imageUrl").value.trim();
+
+      if (!name || !price || !imageUrl) {
+        alert("필수 항목을 모두 입력하세요.");
+        return;
+      }
+
+      const optionNames = document.querySelectorAll(".option-name");
+      const optionQuantities = document.querySelectorAll(".option-quantity");
+
+      const options = [];
+      for (let i = 0; i < optionNames.length; i++) {
+        options.push({
+          name: optionNames[i].value.trim(),
+          quantity: parseInt(optionQuantities[i].value)
+        });
+      }
+
+      try {
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("accessToken")
+          },
+          body: JSON.stringify({ name, price, imageUrl, options })
+        });
+
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(msg || "등록 실패");
+        }
+
+        alert("상품 등록 완료");
+        window.location.href = "/admin/products/list";
+      } catch (err) {
+        alert("오류: " + err.message);
+      }
+    });
+</script>
+</body>
+</html>
