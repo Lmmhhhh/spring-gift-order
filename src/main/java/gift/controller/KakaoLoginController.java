@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.service.KakaoLoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KakaoLoginController {
 
     private static final Logger log = LoggerFactory.getLogger(KakaoLoginController.class);
-    private final KakaoLoginService = kakaoLoginService;
+    private final KakaoLoginService kakaoLoginService;
 
     public KakaoLoginController(KakaoLoginService kakaoLoginService){
         this.kakaoLoginService = kakaoLoginService;
@@ -24,7 +25,7 @@ public class KakaoLoginController {
     public ResponseEntity<String> callback(@RequestParam("code") String code){
         log.info("인가 코드 수신: {}", code);
         kakaoLoginService.requestToken(code);
-        return ResponseEntity.ok("카카오 로그인 완료")
+        return ResponseEntity.ok("카카오 로그인 완료");
     }
 
 }
