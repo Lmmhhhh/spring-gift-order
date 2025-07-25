@@ -7,8 +7,6 @@ import gift.dto.request.KakaoTokenRequest;
 import gift.dto.response.KakaoErrorResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.exception.KakaoApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;
@@ -21,9 +19,9 @@ public class KakaoLoginService {
     private final KakaoOAuthProperties properties;
     private final RestTemplate restTemplate;
 
-    public KakaoLoginService(KakaoOAuthProperties properties) {
+    public KakaoLoginService(KakaoOAuthProperties properties, RestTemplate restTemplate) {
         this.properties = properties;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     public KakaoTokenResponse requestToken(String code) {
