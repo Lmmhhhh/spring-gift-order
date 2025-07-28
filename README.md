@@ -14,4 +14,4 @@
       kakao.connect-timeout-ms: 2000
       kakao.read-timeout-ms: 3000
 - [x] KakaoOAuthClient 분리
-- [ ] 단계별 로깅 
+- [x] 단계별 로깅 
