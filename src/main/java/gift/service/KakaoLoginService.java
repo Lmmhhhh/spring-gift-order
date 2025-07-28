@@ -39,7 +39,7 @@ public class KakaoLoginService {
 
         try {
             KakaoTokenResponse res = client.requestToken(req);
-            log.info("카카오 토큰 요청 성공 - scope: {}", res.scope());
+            log.info("카카오 토큰 요청 성공 - tokenType: {}", res.tokenType());
             return res;
 
         } catch (KakaoApiException exception) {
