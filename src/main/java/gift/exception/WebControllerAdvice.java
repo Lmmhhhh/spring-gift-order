@@ -103,4 +103,10 @@ public class WebControllerAdvice {
                 .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<Map<String, String>> handleKakaoApi(KakaoApiException e) {
+        return ResponseEntity.status(e.getStatus())
+                .body(Map.of("message", e.getMessage()));
+    }
+
 }
