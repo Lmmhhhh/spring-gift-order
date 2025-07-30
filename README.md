@@ -15,3 +15,14 @@
       kakao.read-timeout-ms: 3000
 - [x] KakaoOAuthClient 분리
 - [x] 단계별 로깅 
+
+# [step2] 주문하기 
+
+## 구현 기능 목록
+- [ ] 주문 생성 API 구현 (`POST /api/orders`)
+- [ ] 메시지 전송 Kakao API 연동
+- [ ] 주문 요청/응답 dto 작성
+- [ ] 주문 내역 메시지 작성
+- [ ] 나에게 보내기 
+- [ ] 테스트 코드 작성
+
