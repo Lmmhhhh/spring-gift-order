@@ -43,8 +43,7 @@ public class KakaoLoginService {
 
     public KakaoTokenResponse issueToken(AuthorizationCode code) {
 
-        String masked = code.mask();
-        log.info("카카오 토큰 요청 시작  - code: {}", masked);
+        log.info("카카오 토큰 요청 시작  - code: {}", code.mask());
 
         KakaoTokenRequest req = new KakaoTokenRequest(
                 props.clientId(),
@@ -59,7 +58,7 @@ public class KakaoLoginService {
             return res;
 
         } catch (KakaoApiException exception) {
-            log.error("카카오 API 에러 - code: {}, error: {}", masked, exception.getMessage());
+            log.error("카카오 API 에러 - code: {}, error: {}", code.mask(), exception.getMessage());
             throw exception;
         } catch (ResourceAccessException exception) {
             log.error("카카오 API 네트워크 에러", exception);
@@ -75,7 +74,7 @@ public class KakaoLoginService {
     @Transactional
     public String loginWithKakao(String codeRaw) {
 
-        AuthorizationCode code  = new AuthorizationCode(codeRaw);
+        AuthorizationCode code = AuthorizationCode.of(codeRaw);
         KakaoTokenResponse token = issueToken(code);
 
         KakaoUserResponse user = client.fetchUserInfo(token.accessToken());
