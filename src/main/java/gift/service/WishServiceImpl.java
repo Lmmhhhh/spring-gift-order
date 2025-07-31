@@ -17,9 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class WishServiceImpl implements WishService {
 
@@ -63,7 +60,7 @@ public class WishServiceImpl implements WishService {
     @Override
     public Page<WishResponse> getWishList(Long memberId, Pageable pageable) {
 
-        return wishRepository.findByMember_Id(memberId, pageable)
+        return wishRepository.findByMemberId(memberId, pageable)
                 .map(WishResponse::from);
     }
 

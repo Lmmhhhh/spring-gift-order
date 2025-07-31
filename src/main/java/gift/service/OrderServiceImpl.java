@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
         option.substract(request.quantity());
 
-        wishRepository.deleteByMember_IdAndProduct_Id(memberId, option.getProduct().getId());
+        wishRepository.deleteByMemberIdAndProductId(memberId, option.getProduct().getId());
 
         Order order = new Order(
                 memberId,
