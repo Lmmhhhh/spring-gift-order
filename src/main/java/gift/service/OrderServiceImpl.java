@@ -8,11 +8,12 @@ import gift.exception.OptionNotFoundException;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
-import jakarta.persistence.criteria.Expression;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Service
 public class OrderServiceImpl implements OrderService {     // 재고 차감 재사용
     private final OptionRepository optionRepository;    // 옵션 엔티티 조회
     private final WishRepository wishRepository;
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {     // 재고 차감 재
 
         option.substract(request.quantity());
 
-        wishRepository.deleteByMemberIdAndProductId(memberId, option.getProduct().getId());
+        wishRepository.deleteByMember_IdAndProduct_Id(memberId, option.getProduct().getId());
 
         Order order = new Order(
                 memberId,

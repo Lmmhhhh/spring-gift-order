@@ -37,7 +37,7 @@ public class WishRepositoryTest {
         Wish saved = wishRepository.save(new Wish(member, product));
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getMemberId()).isEqualTo(member.getId());
+        assertThat(saved.getMemberId()).isEqualTo(member.id());
         assertThat(saved.getProductId()).isEqualTo(product.getId());
     }
 
