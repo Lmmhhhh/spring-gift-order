@@ -23,6 +23,39 @@
 - [x] 메시지 전송 Kakao API 연동
 - [x] 주문 요청/응답 dto 작성
 - [x] 주문 내역 메시지 작성
-- [ ] 나에게 보내기 
+- [x] 나에게 보내기 
 - [ ] 테스트 코드 작성
+
+### 주문하기 요청/응답 예시
+
+### Request
+```http
+POST /api/orders HTTP/1.1
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+```json
+{
+  "optionId":1,
+  "quantity":2,
+  "message":"선물 🎁"
+}
+```
+
+### Response
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+```
+```json
+{
+  "id": 1,
+  "optionId": 1,
+  "quantity": 2,
+  "orderDateTime": "2025-07-31T17:30:27.1750832",
+  "message": "선물 🎁"
+}
+```
+
+![img](images/img.png)
 
