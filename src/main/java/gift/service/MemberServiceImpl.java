@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = new Member(request.email(),request.pwd());
         Member newMember = memberRepository.save(member);
 
-        String token = jwtProvider.createToken(newMember.getId(), newMember.getEmail());
+        String token = jwtProvider.createToken(newMember.id(), newMember.email());
         return new MemberResponse(token);
     }
 
@@ -40,10 +40,10 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findByEmail(request.email())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN, "회원이 존재하지 않습니다."));
 
-        if (!member.getPassword().equals(request.pwd())){
+        if (!member.password().equals(request.pwd())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다.");
         }
-        String token = jwtProvider.createToken(member.getId(), member.getEmail());
+        String token = jwtProvider.createToken(member.id(), member.email());
         return new MemberResponse(token);
     }
 

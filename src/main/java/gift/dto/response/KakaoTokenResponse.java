@@ -2,6 +2,8 @@ package gift.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDateTime;
+
 public record KakaoTokenResponse(
         @JsonProperty("token_type")
         String tokenType,
@@ -19,4 +21,8 @@ public record KakaoTokenResponse(
         Integer refreshTokenExpiresIn,
 
         String scope
-) {}
+) {
+        public LocalDateTime expiresAt() {
+                return LocalDateTime.now().plusSeconds(expiresIn);
+        }
+}

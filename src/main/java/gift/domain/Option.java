@@ -28,6 +28,12 @@ public class Option {
 
     ){}
 
+    public static Option of(Product product, String name, int quantity) {
+        Option option = new Option(name, quantity);
+        option.product = product;
+        return option;
+    }
+
     public Option(String name, int quantity){
         this.name = name;
         this.quantity = quantity;

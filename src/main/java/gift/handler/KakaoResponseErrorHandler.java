@@ -29,16 +29,27 @@ public class KakaoResponseErrorHandler extends DefaultResponseErrorHandler {
         KakaoErrorResponse err = mapper.readValue(raw, KakaoErrorResponse.class);
         KakaoErrorCode code = KakaoErrorCode.from(err);
 
-        if (code == KakaoErrorCode.UNKNOWN) {
-            HttpStatusCode status = response.getStatusCode();
-            if (status.is4xxClientError()) {
-                code = KakaoErrorCode.INVALID_REQUEST;
-            } else if (status.is5xxServerError()) {
-                code = KakaoErrorCode.INTERNAL_ERROR;
-            }
+        if (code != KakaoErrorCode.UNKNOWN) {
+            logErrorAndThrow(code, response.getStatusCode(), raw);
+            return;
         }
 
-        log.error("Kakao API error {} - status={} body={}", code.name(), response.getStatusCode(), raw);
+        code = resolveFallbackCode(response.getStatusCode());
+        logErrorAndThrow(code, response.getStatusCode(), raw);
+    }
+
+    private KakaoErrorCode resolveFallbackCode(HttpStatusCode status) {
+        if (status.is4xxClientError()) {
+            return KakaoErrorCode.INVALID_REQUEST;
+        }
+        if (status.is5xxServerError()) {
+            return KakaoErrorCode.INTERNAL_ERROR;
+        }
+        return KakaoErrorCode.UNKNOWN;
+    }
+
+    private void logErrorAndThrow(KakaoErrorCode code, HttpStatusCode status, String raw) {
+        log.error("Kakao API error {} - status={} body={}", code.name(), status, raw);
         throw new KakaoApiException(code.httpStatus(), code.userMessage());
     }
 }
