@@ -6,14 +6,12 @@ public final class AuthorizationCode {
 
     private final String value;
 
-
     public static AuthorizationCode of(String raw) {
         Objects.requireNonNull(raw, "인가코드는 null일 수 없습니다.");
         return new AuthorizationCode(raw);
     }
 
-
-    private AuthorizationCode(String value) {
+    public AuthorizationCode(String value) {
         this.value = value;
     }
 

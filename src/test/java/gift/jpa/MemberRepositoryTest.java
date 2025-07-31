@@ -20,8 +20,8 @@ class MemberRepositoryTest {
     void save() {
         Member saved = memberRepository.save(new Member("abc@gmail.com", "1234"));
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getEmail()).isEqualTo("abc@gmail.com");
+        assertThat(saved.id()).isNotNull();
+        assertThat(saved.email()).isEqualTo("abc@gmail.com");
     }
 
     @Test
@@ -30,6 +30,6 @@ class MemberRepositoryTest {
         memberRepository.save(new Member("abc@gmail.com", "1234"));
         Member found = memberRepository.findByEmail("abc@gmail.com").orElseThrow();
 
-        assertThat(found.getEmail()).isEqualTo("abc@gmail.com");
+        assertThat(found.email()).isEqualTo("abc@gmail.com");
     }
 }

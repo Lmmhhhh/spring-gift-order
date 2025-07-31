@@ -31,7 +31,7 @@ public class Wish {
 
     public Long getId() {return id;}
 
-    public Long getMemberId() {return member.getId();}
+    public Long getMemberId() {return member.id();}
 
     public Long getProductId() {return product.getId();}
 
