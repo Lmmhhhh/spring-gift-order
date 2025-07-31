@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class OrderServiceImpl implements OrderService {     // 재고 차감 재사용
-    private final OptionRepository optionRepository;    // 옵션 엔티티 조회
+public class OrderServiceImpl implements OrderService {
+    private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final OrderRepository orderRepository;
     private final KakaoMessageService kakaoMessageService;
@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {     // 재고 차감 재
                 request.message()
         );
         orderRepository.save(order);
+        kakaoMessageService.sendOrderMsg(memberId, order);
 
         return new OrderResponse(
                 order.getId(),

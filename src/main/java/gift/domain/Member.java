@@ -12,23 +12,25 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", length = 255 , unique = true, nullable = false)
+    @Column(name = "email", length = 255 , unique = true, nullable = true)
     private String email;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password", length = 255, nullable = true)
     private String password;
 
-    @Column(name = "kakao_access_token", length = 2000)
+    @Column(name = "kakao_id")
+    private Long kakaoId;
+
     private String kakaoAccessToken;
-
-    @Column(name = "kakao_refresh_token", length = 2000)
     private String kakaoRefreshToken;
-
-    @Column(name = "kakao_expires_at")
-    private LocalDateTime kakaoExpiresAt;
+    private LocalDateTime kakaoExpiresIn;
 
     protected  Member(){
 
+    }
+
+    public Member(Long kakaoId) {
+        this.kakaoId = kakaoId;
     }
 
     public Member(String email, String pwd){
@@ -36,6 +38,11 @@ public class Member {
         this.password = pwd;
     }
 
+    public void updateKakaoAccessToken(String accessToken, String refreshToken, LocalDateTime expiresIn) {
+        this.kakaoAccessToken = accessToken;
+        this.kakaoRefreshToken = refreshToken;
+        this.kakaoExpiresIn = expiresIn;
+    }
     public Long id() { return id; }
 
     public String email() { return email; }
@@ -46,5 +53,5 @@ public class Member {
 
     public String kakaoRefreshToken(){ return kakaoRefreshToken; }
 
-    public LocalDateTime kakaoExpiresAt()  { return kakaoExpiresAt; }
+    public LocalDateTime kakaoExpiresIn()  { return kakaoExpiresIn; }
 }

@@ -24,15 +24,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse register(ProductRequest request) {
         List<Option> options = request.options().stream()
-                .map(o ->new Option(o.name(),o.quantity()))
+                .map(o -> Option.of(null, o.name(), o.quantity()))
                 .toList();
-        Product product = new Product(request.name(), request.price(), request.imageUrl(),options);
 
-        Product savedProduct = productRepository.save(product);
+        Product product = new Product(
+                request.name(),
+                request.price(),
+                request.imageUrl(),
+                options
+        );
 
-        return new ProductResponse(savedProduct);
+        Product saved = productRepository.save(product);
+        return new ProductResponse(saved);
     }
 
     @Override

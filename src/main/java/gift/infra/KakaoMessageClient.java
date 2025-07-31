@@ -14,7 +14,7 @@ public class KakaoMessageClient {
 
     private final RestTemplate kakaoRestTemplate;
 
-    private static final String DEFAULT_SEND_PATH = "https://kapi.kakao.com/v1/api/talk/friends/message/send";
+    private static final String DEFAULT_SEND_PATH = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
     public KakaoMessageClient(@Qualifier("kakaoRestTemplate") RestTemplate kakaoRestTemplate) {
         this.kakaoRestTemplate = kakaoRestTemplate;

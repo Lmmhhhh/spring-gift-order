@@ -39,9 +39,13 @@ public class Product {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.options = options;
-    }
+        this.options = new ArrayList<>();
 
+        for (Option option : options) {
+            Option withProduct = Option.of(this, option.getName(), option.getQuantity());
+            this.options.add(withProduct);
+        }
+    }
 
     private void validateOptions(List<Option> options) {
         if (options == null || options.isEmpty()) {
