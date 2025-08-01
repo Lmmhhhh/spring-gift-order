@@ -59,3 +59,11 @@ Content-Type: application/json
 
 ![img](images/img.png)
 
+# [step3] 배포하기
+
+## 구현 기능 목록
+- [ ] 배포 스크립트 작성
+- [ ] 실행 권한 및 배포 테스트
+- [ ] CORS 설정 추가
+- [ ] 보안 설정 검토
+- [ ] 테스트 코드 작성
