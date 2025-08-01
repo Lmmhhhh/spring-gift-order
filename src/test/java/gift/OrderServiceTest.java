@@ -60,7 +60,7 @@ class OrderServiceTest {
 
         verify(optionRepository).findById(10L);
         verify(option).substract(2);
-        verify(wishRepository).deleteByMemberIdAndProductId(memberId, 100L);
+        verify(wishRepository).deleteByMember_IdAndProduct_Id(memberId, 100L);
         verify(orderRepository).save(any(Order.class));
         verify(kakaoMessageService).sendOrderMsg(memberId, savedOrder);
 

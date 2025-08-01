@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = createOrderLogic(memberId, request);
 
         try {
-            wishRepository.deleteByMemberIdAndProductId(memberId, order.getOption().getProduct().getId());
+            wishRepository.deleteByMember_IdAndProduct_Id(memberId, order.getOption().getProduct().getId());
         } catch (Exception e) {
             log.warn("[주문 후] 위시리스트 삭제 실패 - memberId={}, productId={}",
                     memberId, order.getOption().getProduct().getId(), e);

@@ -33,12 +33,24 @@ public class KakaoMessageService {
         this.kakaoOAuthClient = kakaoOAuthClient;
     }
 
-
     public void sendOrderMsg(Long memberId, Order order) {
+        Member member = findMember(memberId);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        refreshTokenIfExpired(member);
+        String accessToken = getValidAccessToken(member);
 
+        KakaoMessageRequest request = KakaoMessageRequest.of(order);
+        kakaoMessageClient.sendMsg(accessToken, DEFAULT_MSG_PATH, request.toForm());
+
+        log.info("[Kakao] 메시지 전송 완료 member={}", memberId);
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private void refreshTokenIfExpired(Member member) {
         if (member.kakaoExpiresIn() != null &&
                 member.kakaoExpiresIn().isBefore(LocalDateTime.now())) {
 
@@ -51,14 +63,13 @@ public class KakaoMessageService {
 
             log.info("[Kakao] access token 갱신 완료 - memberId={}", member.id());
         }
+    }
 
+    private String getValidAccessToken(Member member) {
         String accessToken = member.kakaoAccessToken();
         if (accessToken == null) {
             throw new KakaoApiException(HttpStatus.UNAUTHORIZED, "카카오 연동이 필요합니다.");
         }
-
-        KakaoMessageRequest request = KakaoMessageRequest.of(order);
-        kakaoMessageClient.sendMsg(accessToken, DEFAULT_MSG_PATH, request.toForm());
-        log.info("[Kakao] 메시지 전송 완료 member={}", memberId);
+        return accessToken;
     }
 }
