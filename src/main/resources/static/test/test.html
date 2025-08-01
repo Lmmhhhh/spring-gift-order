@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>회원가입 테스트</title>
+</head>
+<body>
+<h1>회원가입</h1>
+<button id="register">회원가입 요청</button>
+
+<script>
+    document.getElementById("register").addEventListener("click", async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/members/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: "test@email.com",
+            pwd: "abc123"
+          })
+        });
+
+        const result = await res.json();
+        console.log("응답:", result);
+        alert("회원가입 성공. 토큰은 콘솔에서 확인하세요.");
+      } catch (e) {
+        console.error("실패:", e);
+        alert("회원가입 실패!");
+      }
+    });
+</script>
+</body>
+</html>
