@@ -24,7 +24,7 @@
 - [x] 주문 요청/응답 dto 작성
 - [x] 주문 내역 메시지 작성
 - [x] 나에게 보내기 
-- [ ] 테스트 코드 작성
+- [x] 테스트 코드 작성
 
 ### 주문하기 요청/응답 예시
 
@@ -59,3 +59,22 @@ Content-Type: application/json
 
 ![img](images/img.png)
 
+# [step3] 배포하기
+
+## 구현 기능 목록
+- [x] 배포 스크립트 작성
+- [x] 실행 권한 및 배포 테스트
+- [x] CORS 설정 추가
+- [x] 보안 설정 검토
+- [x] 테스트 코드 작성
+
+## 배포 테스트
+
+WSL 환경에서 작성한 배포 스크립트를 실행
+
+```bash
+$ chmod +x deploy.sh
+$ ./deploy.sh
+```
+
+백그라운드 로그 파일(nohup.out) 통해 spring boot 실행 확인

@@ -9,12 +9,17 @@ import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+
     private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final OrderRepository orderRepository;
@@ -32,16 +37,12 @@ public class OrderServiceImpl implements OrderService {
         this.kakaoMessageService = kakaoMessageService;
     }
 
-    @Override
     @Transactional
-    public OrderResponse createOrder(Long memberId, OrderRequest request){
-
+    protected Order createOrderLogic(Long memberId, OrderRequest request) {
         Option option = optionRepository.findById(request.optionId())
                 .orElseThrow(() -> new OptionNotFoundException(request.optionId()));
 
         option.substract(request.quantity());
-
-        wishRepository.deleteByMember_IdAndProduct_Id(memberId, option.getProduct().getId());
 
         Order order = new Order(
                 memberId,
@@ -50,12 +51,30 @@ public class OrderServiceImpl implements OrderService {
                 LocalDateTime.now(),
                 request.message()
         );
-        orderRepository.save(order);
-        kakaoMessageService.sendOrderMsg(memberId, order);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public OrderResponse createOrder(Long memberId, OrderRequest request) {
+        Order order = createOrderLogic(memberId, request);
+
+        try {
+            wishRepository.deleteByMember_IdAndProduct_Id(memberId, order.getOption().getProduct().getId());
+        } catch (Exception e) {
+            log.warn("[주문 처리 에러] 위시리스트 삭제 실패 - memberId={}, productId={}",
+                    memberId, order.getOption().getProduct().getId(), e);
+        }
+
+        try {
+            kakaoMessageService.sendOrderMsg(memberId, order);
+        } catch (Exception e) {
+            log.warn("[주문 처리 에러] 카카오 메시지 전송 실패 - memberId={}, orderId={}",
+                    memberId, order.getId(), e);
+        }
 
         return new OrderResponse(
                 order.getId(),
-                option.getId(),
+                order.getOption().getId(),
                 order.getQuantity(),
                 order.getOrderDateTime(),
                 order.getMessage()
