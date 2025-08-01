@@ -1,20 +1,20 @@
 #!/bin/bash
-BUILD_PATH=$(ls /home/ubuntu/build/*.jar)
-JAR_NAME=$(basename $BUILD_PATH)
 
-CURRENT_PID=$(pgrep -f $JAR_NAME)
+BUILD_PATH=$(ls -t build/libs/*.jar | grep -v plain | head -n 1)
+JAR_NAME=$(basename "$BUILD_PATH")
 
-if [ -z $CURRENT_PID ]
-then
-  sleep 1
-else
-  kill -15 $CURRENT_PID
-  sleep 5
+echo "> JAR 이름: $JAR_NAME"
+
+CURRENT_PID=$(pgrep -f "$JAR_NAME")
+
+if [ -n "$CURRENT_PID" ]; then
+  echo "> 기존 프로세스 종료: $CURRENT_PID"
+  kill -15 "$CURRENT_PID"
+  sleep 3
 fi
 
-DEPLOY_PATH=/home/ubuntu/
-cp $BUILD_PATH $DEPLOY_PATH
-cd $DEPLOY_PATH
+DEPLOY_JAR="$BUILD_PATH"
+echo "> 실행할 JAR: $DEPLOY_JAR"
+nohup java -jar "$DEPLOY_JAR" > nohup.out 2>&1 &
 
-DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
-nohup java -jar $DEPLOY_JAR > /dev/null 2> /dev/null < /dev/null &
+echo "> 배포 완료"
