@@ -66,7 +66,7 @@ Content-Type: application/json
 - [x] 실행 권한 및 배포 테스트
 - [x] CORS 설정 추가
 - [x] 보안 설정 검토
-- [ ] 테스트 코드 작성
+- [x] 테스트 코드 작성
 
 ## 배포 테스트
 
