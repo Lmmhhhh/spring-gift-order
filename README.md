@@ -63,7 +63,18 @@ Content-Type: application/json
 
 ## 구현 기능 목록
 - [x] 배포 스크립트 작성
-- [ ] 실행 권한 및 배포 테스트
+- [x] 실행 권한 및 배포 테스트
 - [x] CORS 설정 추가
 - [ ] 보안 설정 검토
 - [ ] 테스트 코드 작성
+
+## 배포 테스트
+
+WSL 환경에서 작성한 배포 스크립트를 실행
+
+```bash
+$ chmod +x deploy.sh
+$ ./deploy.sh
+```
+
+백그라운드 로그 파일(nohup.out) 통해 spring boot 실행 확인
